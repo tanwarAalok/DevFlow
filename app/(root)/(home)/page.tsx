@@ -4,7 +4,7 @@ export default function Home() {
     return (
         <div>
             <UserButton afterSignOutUrl="/"/>
-            <h1>Hello</h1>
+            <h1 className="h1-bold">Hello world this is heading !</h1>
         </div>
     )
 }
