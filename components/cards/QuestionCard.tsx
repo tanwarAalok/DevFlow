@@ -5,7 +5,7 @@ import Metric from '../shared/Metric';
 import { formatAndDivideNumber, getTimestamp } from '@/lib/utils';
 import {SignedIn} from '@clerk/nextjs';
 
-// import EditDeleteAction from '../shared/EditDeleteAction';
+import EditDeleteAction from '../shared/EditDeleteAction';
 
 interface QuestionProps {
     _id: string;
@@ -45,10 +45,10 @@ const QuestionCard = ({clerkId, _id, title, tags, author, upvotes, views, answer
                     </Link>
                 </div>
 
+
                 <SignedIn>
                     {showActionButtons && (
-                        // <EditDeleteAction type="Question" itemId={JSON.stringify(_id)}/>
-                        <h1>hi</h1>
+                        <EditDeleteAction type="Question" itemId={JSON.stringify(_id)}/>
                     )}
                 </SignedIn>
             </div>
