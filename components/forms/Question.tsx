@@ -21,6 +21,7 @@ import Image from 'next/image';
 // import { createQuestion, editQuestion } from '@/lib/actions/question.action';
 import { useRouter, usePathname } from 'next/navigation';
 import { useTheme } from '@/context/ThemeProvider';
+import {createQuestion} from "@/lib/actions/question.action";
 
 interface Props {
     type?: string;
@@ -51,35 +52,45 @@ const Question = ({ type, mongoUserId, questionDetails }: Props) => {
 
     // 2. Define a submit handler.
     async function onSubmit(values: z.infer<typeof QuestionsSchema>) {
-        // setIsSubmitting(true);
-        //
-        // try {
-        //     if(type === 'Edit') {
-        //         await editQuestion({
-        //             questionId: parsedQuestionDetails._id,
-        //             title: values.title,
-        //             content: values.explanation,
-        //             path: pathname,
-        //         })
-        //
-        //         router.push(`/question/${parsedQuestionDetails._id}`);
-        //     } else {
-        //         await createQuestion({
-        //             title: values.title,
-        //             content: values.explanation,
-        //             tags: values.tags,
-        //             author: JSON.parse(mongoUserId),
-        //             path: pathname,
-        //         });
-        //
-        //         router.push('/');
-        //     }
-        //
-        // } catch (error) {
-        //
-        // } finally {
-        //     setIsSubmitting(false);
-        // }
+        setIsSubmitting(true);
+
+        try {
+            // if(type === 'Edit') {
+            //     await editQuestion({
+            //         questionId: parsedQuestionDetails._id,
+            //         title: values.title,
+            //         content: values.explanation,
+            //         path: pathname,
+            //     })
+            //
+            //     router.push(`/question/${parsedQuestionDetails._id}`);
+            // } else {
+            //     await createQuestion({
+            //         title: values.title,
+            //         content: values.explanation,
+            //         tags: values.tags,
+            //         author: JSON.parse(mongoUserId),
+            //         path: pathname,
+            //     });
+            //
+            //     router.push('/');
+            // }
+
+            await createQuestion({
+                title: values.title,
+                content: values.explanation,
+                tags: values.tags,
+                author: JSON.parse(mongoUserId),
+                path: pathname,
+            });
+
+            router.push('/');
+
+        } catch (error) {
+
+        } finally {
+            setIsSubmitting(false);
+        }
     }
 
     const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, field: any) => {

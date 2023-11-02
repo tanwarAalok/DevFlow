@@ -1,9 +1,24 @@
 "use server"
 
 import {connectToDatabase} from "@/lib/database";
-import {CreateQuestionParams} from "@/lib/actions/shared.types";
+import {CreateQuestionParams, GetQuestionsParams} from "@/lib/actions/shared.types";
 import {Question, Tag, Interaction, User} from "@/models"
+import {revalidatePath} from "next/cache";
 
+export async function getQuestions(params: GetQuestionsParams){
+    try{
+        await connectToDatabase();
+
+        const questions = await Question.find({})
+            .populate({path: 'tags', model: Tag})
+            .populate({path: 'author',model: User})
+            .sort({createdAt: -1})
+
+        return {questions}
+    }catch (error) {
+        console.log(error);
+    }
+}
 export async function createQuestion(params: CreateQuestionParams) {
     try {
         await connectToDatabase();
@@ -45,7 +60,7 @@ export async function createQuestion(params: CreateQuestionParams) {
         // Increment author's reputation by +5 for creating a question
         await User.findByIdAndUpdate(author, { $inc: { reputation: 5 }})
 
-        // revalidatePath(path)
+        revalidatePath(path)
     } catch (error) {
         console.log(error);
     }
