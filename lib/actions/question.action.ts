@@ -1,8 +1,13 @@
 "use server"
 
 import {connectToDatabase} from "@/lib/database";
-import {CreateQuestionParams, GetQuestionsParams} from "@/lib/actions/shared.types";
-import {Question, Tag, Interaction, User} from "@/models"
+import {
+    CreateQuestionParams, DeleteQuestionParams, EditQuestionParams,
+    GetQuestionByIdParams,
+    GetQuestionsParams,
+    QuestionVoteParams
+} from "@/lib/actions/shared.types";
+import {Question, Tag, Interaction, User, Answer} from "@/models"
 import {revalidatePath} from "next/cache";
 
 export async function getQuestions(params: GetQuestionsParams){
@@ -15,6 +20,18 @@ export async function getQuestions(params: GetQuestionsParams){
             .sort({createdAt: -1})
 
         return {questions}
+    }catch (error) {
+        console.log(error);
+    }
+}
+
+export async function getQuestionById(params: GetQuestionByIdParams){
+    try{
+        await connectToDatabase();
+        const {questionId} = params;
+        return await Question.findById(questionId)
+            .populate({ path: 'tags', model: Tag, select: '_id name'})
+            .populate({ path: 'author', model: User, select: '_id clerkId name picture'})
     }catch (error) {
         console.log(error);
     }
@@ -63,5 +80,143 @@ export async function createQuestion(params: CreateQuestionParams) {
         revalidatePath(path)
     } catch (error) {
         console.log(error);
+    }
+}
+
+export async function upvoteQuestion(params: QuestionVoteParams) {
+    try {
+        await connectToDatabase();
+
+        const { questionId, userId, hasupVoted, hasdownVoted, path } = params;
+
+        let updateQuery = {};
+
+        if(hasupVoted) {
+            updateQuery = { $pull: { upvotes: userId }}
+        } else if (hasdownVoted) {
+            updateQuery = {
+                $pull: { downvotes: userId },
+                $push: { upvotes: userId }
+            }
+        } else {
+            updateQuery = { $addToSet: { upvotes: userId }}
+        }
+
+        const question = await Question.findByIdAndUpdate(questionId, updateQuery, { new: true });
+
+        if(!question) {
+            throw new Error("Question not found");
+        }
+
+        // Increment author's reputation by +1/-1 for upvoting/revoking an upvote to the question
+        await User.findByIdAndUpdate(userId, {
+            $inc: { reputation: hasupVoted ? -1 : 1}
+        })
+
+        // Increment author's reputation by +10/-10 for recieving an upvote/downvote to the question
+        await User.findByIdAndUpdate(question.author, {
+            $inc: { reputation: hasupVoted ? -10 : 10}
+        })
+
+        revalidatePath(path);
+    } catch (error) {
+        console.log(error);
+        throw error;
+    }
+}
+
+export async function downvoteQuestion(params: QuestionVoteParams) {
+    try {
+        await connectToDatabase();
+
+        const { questionId, userId, hasupVoted, hasdownVoted, path } = params;
+
+        let updateQuery = {};
+
+        if(hasdownVoted) {
+            updateQuery = { $pull: { downvote: userId }}
+        } else if (hasupVoted) {
+            updateQuery = {
+                $pull: { upvotes: userId },
+                $push: { downvotes: userId }
+            }
+        } else {
+            updateQuery = { $addToSet: { downvotes: userId }}
+        }
+
+        const question = await Question.findByIdAndUpdate(questionId, updateQuery, { new: true });
+
+        if(!question) {
+            throw new Error("Question not found");
+        }
+
+        // Increment author's reputation
+        await User.findByIdAndUpdate(userId, {
+            $inc: { reputation: hasdownVoted ? -2 : 2 }
+        })
+
+        await User.findByIdAndUpdate(question.author, {
+            $inc: { reputation: hasdownVoted ? -10 : 10 }
+        })
+
+        revalidatePath(path);
+    } catch (error) {
+        console.log(error);
+        throw error;
+    }
+}
+
+export async function deleteQuestion(params: DeleteQuestionParams) {
+    try {
+        await connectToDatabase();
+
+        const { questionId, path } = params;
+
+        await Question.deleteOne({ _id: questionId });
+        await Answer.deleteMany({ question: questionId });
+        await Interaction.deleteMany({ question: questionId });
+        await Tag.updateMany({ questions: questionId }, { $pull: { questions: questionId }});
+
+        revalidatePath(path);
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+export async function editQuestion(params: EditQuestionParams) {
+    try {
+        await connectToDatabase();
+
+        const { questionId, title, content, path } = params;
+
+        const question = await Question.findById(questionId).populate("tags");
+
+        if(!question) {
+            throw new Error("Question not found");
+        }
+
+        question.title = title;
+        question.content = content;
+
+        await question.save();
+
+        revalidatePath(path);
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+export async function getHotQuestions() {
+    try {
+        await connectToDatabase();
+
+        const hotQuestions = await Question.find({})
+            .sort({ views: -1, upvotes: -1 })
+            .limit(5);
+
+        return hotQuestions;
+    } catch (error) {
+        console.log(error);
+        throw error;
     }
 }

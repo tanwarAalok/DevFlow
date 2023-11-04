@@ -2,7 +2,13 @@
 
 import {connectToDatabase} from "@/lib/database";
 import {Question, User} from "@/models";
-import {CreateUserParams, DeleteUserParams, GetAllUsersParams, UpdateUserParams} from "@/lib/actions/shared.types";
+import {
+    CreateUserParams,
+    DeleteUserParams,
+    GetAllUsersParams,
+    GetUserByIdParams,
+    UpdateUserParams
+} from "@/lib/actions/shared.types";
 import {revalidatePath} from "next/cache";
 
 export async function getAllUsers(params: GetAllUsersParams) {
@@ -16,7 +22,7 @@ export async function getAllUsers(params: GetAllUsersParams) {
     }
 }
 
-export async function getUserById(params: any) {
+export async function getUserById(params: GetUserByIdParams) {
     try {
         await connectToDatabase();
         const { userId } = params;
