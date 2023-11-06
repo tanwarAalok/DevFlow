@@ -5,7 +5,7 @@ import {connectToDatabase} from "@/lib/database";
 
 export async function viewQuestion(params: ViewQuestionParams) {
     try {
-        await connectToDatabase();
+        await connectToDatabase() ;
 
         const { questionId, userId } = params;
 
