@@ -8,11 +8,21 @@ import QuestionCard from "@/components/cards/QuestionCard";
 import NoResult from "@/components/shared/NoResult";
 import {getQuestions} from "@/lib/actions/question.action";
 import {auth} from "@clerk/nextjs";
+import {SearchParamsProps} from "@/types";
+import {Metadata} from "next";
 
 
-export default async function Home() {
+export const metadata: Metadata = {
+    title: 'Home | DevFlow',
+}
+
+export default async function Home({searchParams}: SearchParamsProps) {
     const { userId } = auth();
-    const result = await getQuestions({});
+
+    const result = await getQuestions({
+        searchQuery: searchParams.q
+    });
+
 
     return (
         <>

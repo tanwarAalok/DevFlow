@@ -5,9 +5,17 @@ import {UserFilters} from "@/constants/filters";
 import Link from "next/link";
 import {getAllUsers} from "@/lib/actions/user.action";
 import UserCard from "@/components/cards/UserCard";
+import {Metadata} from "next";
+import {SearchParamsProps} from "@/types";
 
-const Page = async () => {
-    const result = await getAllUsers({});
+
+export const metadata: Metadata = {
+    title: 'Community | DevFlow',
+}
+const Page = async ({searchParams}: SearchParamsProps) => {
+    const result = await getAllUsers({
+        searchQuery: searchParams.q
+    });
     return (
         <>
             <h1 className="h1-bold text-dark100_light900">All Users</h1>

@@ -13,11 +13,25 @@ import {
 import {revalidatePath} from "next/cache";
 import {BadgeCriteriaType} from "@/types";
 import {assignBadges} from "@/lib/utils";
+import {FilterQuery} from "mongoose";
 
 export async function getAllUsers(params: GetAllUsersParams) {
     try {
         await connectToDatabase();
-        const users =  await User.find({});
+
+        const {searchQuery} = params;
+
+        const query: FilterQuery<typeof Question> = {}
+
+        if(searchQuery){
+            query.$or = [
+                {name: {$regex: new RegExp(searchQuery, "i")}},
+                {username: {$regex: new RegExp(searchQuery, "i")}}
+            ]
+        }
+
+
+        const users =  await User.find(query);
         return {users};
     } catch (error) {
         console.log(error);
@@ -123,42 +137,17 @@ export async function getSavedQuestions(params: GetSavedQuestionsParams) {
     try {
         await connectToDatabase();
 
-        const { clerkId, searchQuery, filter, page = 1, pageSize = 20 } = params;
+        const { clerkId, searchQuery,pageSize = 20 } = params;
 
-        // const skipAmount = (page - 1) * pageSize;
-        //
-        // const query: FilterQuery<typeof Question> = searchQuery
-        //     ? { title: { $regex: new RegExp(searchQuery, 'i') } }
-        //     : { };
-        //
-        // let sortOptions = {};
-
-        // switch (filter) {
-        //     case "most_recent":
-        //         sortOptions = { createdAt: -1 }
-        //         break;
-        //     case "oldest":
-        //         sortOptions = { createdAt: 1 }
-        //         break;
-        //     case "most_voted":
-        //         sortOptions = { upvotes: -1 }
-        //         break;
-        //     case "most_viewed":
-        //         sortOptions = { views: -1 }
-        //         break;
-        //     case "most_answered":
-        //         sortOptions = { answers: -1 }
-        //         break;
-        //
-        //     default:
-        //         break;
-        // }
+        const query: FilterQuery<typeof Question> = searchQuery
+            ? { title: { $regex: new RegExp(searchQuery, 'i') } }
+            : { };
 
         const user = await User
             .findOne({ clerkId })
             .populate({
                 path: 'saved',
-                // match: query,
+                match: query,
                 // options: {
                 //     sort: sortOptions,
                 //     skip: skipAmount,

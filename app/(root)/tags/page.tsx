@@ -5,16 +5,24 @@ import {UserFilters} from "@/constants/filters";
 import Link from "next/link";
 import {getAllTags} from "@/lib/actions/tag.action";
 import NoResult from "@/components/shared/NoResult";
+import {SearchParamsProps} from "@/types";
+import {Metadata} from "next";
 
-const Page = async () => {
-    const result = await getAllTags({});
+export const metadata: Metadata = {
+    title: 'Tags | DevFlow',
+}
+
+const Page = async ({ searchParams }: SearchParamsProps) => {
+    const result = await getAllTags({
+        searchQuery: searchParams.q,
+    });
     return (
         <>
             <h1 className="h1-bold text-dark100_light900">All Users</h1>
 
             <div className="mt-11 flex justify-between gap-5 max-sm:flex-col sm:items-center">
                 <LocalSearchbar
-                    route="/community"
+                    route="/tags"
                     iconPosition="left"
                     imgSrc="/assets/icons/search.svg"
                     placeholder="Search for amazing minds"
