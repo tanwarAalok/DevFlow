@@ -4,7 +4,6 @@ import RenderTag from '../shared/RenderTag';
 import Metric from '../shared/Metric';
 import { formatAndDivideNumber, getTimestamp } from '@/lib/utils';
 import {SignedIn} from '@clerk/nextjs';
-
 import EditDeleteAction from '../shared/EditDeleteAction';
 
 interface QuestionProps {
@@ -44,7 +43,6 @@ const QuestionCard = ({clerkId, _id, title, tags, author, upvotes, views, answer
                         </h3>
                     </Link>
                 </div>
-
 
                 <SignedIn>
                     {showActionButtons && (
