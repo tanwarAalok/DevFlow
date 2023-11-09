@@ -19,20 +19,44 @@ export async function getAllUsers(params: GetAllUsersParams) {
     try {
         await connectToDatabase();
 
-        const {searchQuery} = params;
+        const { searchQuery, filter, page = 1, pageSize = 10 } = params;
+        const skipAmount = (page - 1) * pageSize;
 
-        const query: FilterQuery<typeof Question> = {}
+        const query: FilterQuery<typeof User> = {};
 
-        if(searchQuery){
+        if(searchQuery) {
             query.$or = [
-                {name: {$regex: new RegExp(searchQuery, "i")}},
-                {username: {$regex: new RegExp(searchQuery, "i")}}
+                { name: { $regex: new RegExp(searchQuery, 'i') }},
+                { username: { $regex: new RegExp(searchQuery, 'i') }},
             ]
         }
 
+        let sortOptions = {};
 
-        const users =  await User.find(query);
-        return {users};
+        switch (filter) {
+            case "new_users":
+                sortOptions = { joinedAt: -1 }
+                break;
+            case "old_users":
+                sortOptions = { joinedAt: 1 }
+                break;
+            case "top_contributors":
+                sortOptions = { reputation: -1 }
+                break;
+
+            default:
+                break;
+        }
+
+        const users = await User.find(query)
+            .sort(sortOptions)
+            .skip(skipAmount)
+            .limit(pageSize)
+
+        const totalUsers = await User.countDocuments(query);
+        const isNext = totalUsers > skipAmount + users.length;
+
+        return { users, isNext };
     } catch (error) {
         console.log(error);
         throw error;
@@ -137,7 +161,32 @@ export async function getSavedQuestions(params: GetSavedQuestionsParams) {
     try {
         await connectToDatabase();
 
-        const { clerkId, searchQuery,pageSize = 20 } = params;
+        const { clerkId, searchQuery, filter, page = 1,pageSize = 10 } = params;
+
+        const skipAmount = (page - 1) * pageSize;
+
+        let sortOptions = {};
+
+        switch (filter) {
+            case "most_recent":
+                sortOptions = { createdAt: -1 }
+                break;
+            case "oldest":
+                sortOptions = { createdAt: 1 }
+                break;
+            case "most_voted":
+                sortOptions = { upvotes: -1 }
+                break;
+            case "most_viewed":
+                sortOptions = { views: -1 }
+                break;
+            case "most_answered":
+                sortOptions = { answers: -1 }
+                break;
+
+            default:
+                break;
+        }
 
         const query: FilterQuery<typeof Question> = searchQuery
             ? { title: { $regex: new RegExp(searchQuery, 'i') } }
@@ -148,11 +197,11 @@ export async function getSavedQuestions(params: GetSavedQuestionsParams) {
             .populate({
                 path: 'saved',
                 match: query,
-                // options: {
-                //     sort: sortOptions,
-                //     skip: skipAmount,
-                //     limit: pageSize + 1,
-                // },
+                options: {
+                    sort: sortOptions,
+                    skip: skipAmount,
+                    limit: pageSize + 1,
+                },
                 populate: [
                     { path: 'tags', model: Tag, select: "_id name" },
                     { path: 'author', model: User, select: '_id clerkId name picture'}

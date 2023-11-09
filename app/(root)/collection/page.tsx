@@ -7,6 +7,7 @@ import { getSavedQuestions } from "@/lib/actions/user.action";
 import { SearchParamsProps } from "@/types";
 import { auth } from '@clerk/nextjs'
 import {Metadata} from "next";
+import Pagination from "@/components/shared/Pagination";
 
 
 export const metadata: Metadata = {
@@ -21,8 +22,8 @@ export default async function Home({ searchParams }: SearchParamsProps) {
     const result = await getSavedQuestions({
         clerkId: userId,
         searchQuery: searchParams.q,
-        // filter: searchParams.filter,
-        // page: searchParams.page ? +searchParams.page : 1,
+        filter: searchParams.filter,
+        page: searchParams.page ? +searchParams.page : 1,
     });
 
     return (
@@ -68,10 +69,10 @@ export default async function Home({ searchParams }: SearchParamsProps) {
             </div>
 
             <div className="mt-10">
-                {/*<Pagination*/}
-                {/*    pageNumber={searchParams?.page ? +searchParams.page : 1}*/}
-                {/*    isNext={result.isNext}*/}
-                {/*/>*/}
+                <Pagination
+                    pageNumber={searchParams?.page ? +searchParams.page : 1}
+                    isNext={result.isNext}
+                />
             </div>
         </>
     )

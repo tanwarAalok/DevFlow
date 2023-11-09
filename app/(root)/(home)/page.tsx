@@ -10,6 +10,7 @@ import {getQuestions} from "@/lib/actions/question.action";
 import {auth} from "@clerk/nextjs";
 import {SearchParamsProps} from "@/types";
 import {Metadata} from "next";
+import Pagination from "@/components/shared/Pagination";
 
 
 export const metadata: Metadata = {
@@ -19,9 +20,28 @@ export const metadata: Metadata = {
 export default async function Home({searchParams}: SearchParamsProps) {
     const { userId } = auth();
 
-    const result = await getQuestions({
-        searchQuery: searchParams.q
-    });
+    let result;
+
+    if(searchParams?.filter === 'recommended') {
+        // if(userId) {
+        //     result = await getRecommendedQuestions({
+        //         userId,
+        //         searchQuery: searchParams.q,
+        //         page: searchParams.page ? +searchParams.page : 1,
+        //     });
+        // } else {
+            result = {
+                questions: [],
+                isNext: false,
+            }
+        // }
+    } else {
+        result = await getQuestions({
+            searchQuery: searchParams.q,
+            filter: searchParams.filter,
+            page: searchParams.page ? +searchParams.page : 1,
+        });
+    }
 
 
     return (
@@ -72,6 +92,13 @@ export default async function Home({searchParams}: SearchParamsProps) {
                         link="/ask-question"
                         linkTitle="Ask a Question"
                     />}
+            </div>
+
+            <div className="mt-10">
+                <Pagination
+                    pageNumber={searchParams?.page ? +searchParams.page : 1}
+                    isNext={result.isNext}
+                />
             </div>
 
         </>
