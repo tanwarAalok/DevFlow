@@ -55,7 +55,32 @@ const Answer = ({ question, questionId, authorId }: Props) => {
             setIsSubmitting(false)
         }
     }
-    const generateAIAnswer = () => {}
+    const generateAIAnswer = async () => {
+        if(!authorId) return;
+        setSetIsSubmittingAI(true);
+        try{
+            const response = await fetch(
+                `${process.env.NEXT_PUBLIC_SERVER_URL}/api/chatgpt`,
+                {
+                    method: 'POST',
+                    body: JSON.stringify({question})
+                }
+            )
+            const aiAnswer = await response.json();
+
+            // Convert plain text to HTML format
+            const formattedAnswer = aiAnswer.reply.replace(/\n/g, '<br />');
+
+            if(editorRef.current) {
+                const editor = editorRef.current as any;
+                editor.setContent(formattedAnswer);
+            }
+        }catch (error){
+            console.log(error)
+        }finally {
+            setSetIsSubmittingAI(false)
+        }
+    }
 
 
     return (

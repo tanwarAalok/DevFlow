@@ -11,7 +11,7 @@ import Pagination from "@/components/shared/Pagination";
 
 
 export const metadata: Metadata = {
-    title: 'Community | DevFlow',
+    title: 'Community | DevHelp',
 }
 const Page = async ({searchParams}: SearchParamsProps) => {
     const result = await getAllUsers({

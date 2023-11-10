@@ -10,7 +10,11 @@ import ParseHTML from "@/components/shared/ParseHTML";
 import Answer from "@/components/forms/Answer";
 import AllAnswers from "@/components/shared/AllAnswers";
 import Votes from "@/components/shared/Votes";
+import { Metadata } from "next";
 
+export const metadata: Metadata = {
+    title: 'Question | DevHelp',
+}
 const Page = async ({ params, searchParams }: any) => {
     const {userId: clerkId} = auth();
 

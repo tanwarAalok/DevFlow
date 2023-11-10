@@ -263,9 +263,9 @@ export async function getUserInfo(params: GetUserByIdParams) {
         const [questionViews] = await Answer.aggregate([
             { $match: { author: user._id }},
             { $group: {
-                    _id: null,
-                    totalViews: { $sum: "$views" }
-                }}
+                _id: null,
+                totalViews: { $sum: "$views" }
+            }}
         ])
 
         const criteria = [

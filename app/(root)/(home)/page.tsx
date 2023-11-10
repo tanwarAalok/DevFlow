@@ -14,7 +14,7 @@ import Pagination from "@/components/shared/Pagination";
 
 
 export const metadata: Metadata = {
-    title: 'Home | DevFlow',
+    title: 'Home | DevHelp',
 }
 
 export default async function Home({searchParams}: SearchParamsProps) {

@@ -10,7 +10,7 @@ import {Metadata} from "next";
 import Pagination from "@/components/shared/Pagination";
 
 export const metadata: Metadata = {
-    title: 'Tags | DevFlow',
+    title: 'Tags | DevHelp',
 }
 
 const Page = async ({ searchParams }: SearchParamsProps) => {

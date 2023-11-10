@@ -5,7 +5,6 @@ import QuestionCard from "@/components/cards/QuestionCard";
 import NoResult from "@/components/shared/NoResult";
 import {URLProps} from "@/types";
 import {getQuestionsByTagId} from "@/lib/actions/tag.action";
-
 const Page = async ({ params, searchParams }: URLProps) => {
     const result = await getQuestionsByTagId({
         tagId: params.id,
