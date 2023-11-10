@@ -6,7 +6,7 @@ import React from 'react'
 import {Metadata} from "next";
 
 export const metadata: Metadata = {
-    title: 'Ask-Question | DevHelp',
+    title: 'Ask-Question | DevFlow',
 }
 const Page = async () => {
     const { userId } = auth();

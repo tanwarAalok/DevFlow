@@ -13,7 +13,7 @@ import Votes from "@/components/shared/Votes";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-    title: 'Question | DevHelp',
+    title: 'Question | DevFlow',
 }
 const Page = async ({ params, searchParams }: any) => {
     const {userId: clerkId} = auth();

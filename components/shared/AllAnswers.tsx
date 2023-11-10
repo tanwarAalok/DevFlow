@@ -7,8 +7,7 @@ import Image from 'next/image';
 import { getTimestamp } from '@/lib/utils';
 import ParseHTML from './ParseHTML';
 import Votes from "@/components/shared/Votes";
-// import Votes from './Votes';
-// import Pagination from './Pagination';
+import Pagination from "@/components/shared/Pagination";
 
 interface Props {
     questionId: string;
@@ -45,7 +44,7 @@ const AllAnswers = async ({ questionId, userId, totalAnswers, page, filter }: Pr
                                     alt="profile"
                                     className="rounded-full object-cover max-sm:mt-0.5"
                                 />
-                                <div className="flex flex-col sm:flex-row sm:items-center">
+                                <div className="flex flex-col sm:flex-row sm:items-center gap-2">
                                     <p className="body-semibold text-dark300_light700">
                                         {answer.author.name}
                                     </p>
@@ -75,10 +74,10 @@ const AllAnswers = async ({ questionId, userId, totalAnswers, page, filter }: Pr
             </div>
 
             <div className="mt-10 w-full">
-                {/*<Pagination*/}
-                {/*    pageNumber={page ? +page : 1}*/}
-                {/*    isNext={result.isNextAnswer}*/}
-                {/*/>*/}
+                <Pagination
+                    pageNumber={page ? +page : 1}
+                    isNext={result.isNextAnswer}
+                />
             </div>
         </div>
     )

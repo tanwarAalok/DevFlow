@@ -15,7 +15,7 @@ import AnswersTab from "@/components/AnswersTab";
 import {Metadata} from "next";
 
 export const metadata: Metadata = {
-    title: 'Profile | DevHelp',
+    title: 'Profile | DevFlow',
 }
 const Page = async ({ params, searchParams}: URLProps) => {
     const { userId: clerkId } = auth();

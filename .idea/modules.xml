@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/devhelp.iml" filepath="$PROJECT_DIR$/.idea/devhelp.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/DevFlow.iml" filepath="$PROJECT_DIR$/.idea/DevFlow.iml" />
     </modules>
   </component>
 </project>

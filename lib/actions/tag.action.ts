@@ -2,7 +2,7 @@
 
 import {GetAllTagsParams, GetQuestionsByTagIdParams, GetTopInteractedTagsParams} from "@/lib/actions/shared.types";
 import {connectToDatabase} from "@/lib/database";
-import {User, Tag, Question} from "@/models";
+import {Interaction, Question, Tag, User} from "@/models";
 import {FilterQuery} from "mongoose";
 import {ITag} from "@/models/tag.model";
 
@@ -16,10 +16,38 @@ export async function getTopInteractedTags(params: GetTopInteractedTagsParams) {
 
         if(!user) throw new Error("User not found");
 
+        // Find the user's interactions
+        const userInteractions = await Interaction.find({ user: user._id })
+            .populate("tags")
+            .exec();
+
+        // Extract tags from user's interactions
+        const userTags = userInteractions.reduce((tags, interaction) => {
+            if (interaction.tags) {
+                tags = tags.concat(interaction.tags);
+            }
+            return tags;
+        }, []);
+
+        // Get distinct tag IDs from user's interactions
+        const distinctUserTagIds = [
+            // @ts-ignore
+            ...new Set(userTags.map((tag: any) => tag._id)),
+        ];
+
+        const query: FilterQuery<typeof Tag> = {
+            $and: [
+                { _id: { $in: distinctUserTagIds } },
+                {$project: {_id: 1, name: 1}}
+            ],
+        };
+
+        return await Tag.find(query);
+
         // Find interactions for the user and group by tags...
         // Interaction...
 
-        return [ {_id: '1', name: 'tag'}, {_id: '2', name: 'tag2'}]
+        // return [ {_id: '1', name: 'tag'}, {_id: '2', name: 'tag2'}]
     } catch (error) {
         console.log(error);
         throw error;
