@@ -14,7 +14,7 @@ import Pagination from "@/components/shared/Pagination";
 
 export  const  metadata:  Metadata  =  {
     title: 'Home | DevFlow',
-    description:  "Home page of Dev Overflow",
+    description:  "Home page of DevFlow",
     icons:  {
         icon:  "/assets/images/site-logo.svg",
     },
