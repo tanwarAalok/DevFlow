@@ -8,6 +8,16 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
+export function generateQueryString(query: string | undefined, location: string | undefined, defaultLocation: string): string {
+  if (query && location) {
+    return `${query} ${location}`;
+  } else if (query) {
+    return `${query} ${defaultLocation}`;
+  } else {
+    return defaultLocation;
+  }
+}
+
 export const getTimestamp = (createdAt: Date): string => {
   const now = new Date();
   const timeDifference = now.getTime() - createdAt.getTime();
@@ -133,3 +143,53 @@ export const assignBadges = (params: BadgeParam) => {
 
   return badgeCounts;
 }
+
+export const locationFilter = [
+  { value: "usa", label: "United States" },
+  { value: "can", label: "Canada" },
+  { value: "uk", label: "United Kingdom" },
+  { value: "aus", label: "Australia" },
+  { value: "ger", label: "Germany" },
+  { value: "fra", label: "France" },
+  { value: "ita", label: "Italy" },
+  { value: "jpn", label: "Japan" },
+  { value: "chn", label: "China" },
+  { value: "ind", label: "India" },
+  { value: "bra", label: "Brazil" },
+  { value: "rus", label: "Russia" },
+  { value: "mex", label: "Mexico" },
+  { value: "esp", label: "Spain" },
+  { value: "kor", label: "South Korea" },
+  { value: "idn", label: "Indonesia" },
+  { value: "tur", label: "Turkey" },
+  { value: "sau", label: "Saudi Arabia" },
+  { value: "zaf", label: "South Africa" },
+  { value: "nig", label: "Nigeria" },
+  { value: "arg", label: "Argentina" },
+  { value: "can", label: "Canada" },
+  { value: "col", label: "Colombia" },
+  { value: "pol", label: "Poland" },
+  { value: "tha", label: "Thailand" },
+  { value: "vn", label: "Vietnam" },
+  { value: "phl", label: "Philippines" },
+  { value: "egy", label: "Egypt" },
+  { value: "nld", label: "Netherlands" },
+  { value: "prt", label: "Portugal" },
+  { value: "grc", label: "Greece" },
+  { value: "swe", label: "Sweden" },
+  { value: "che", label: "Switzerland" },
+  { value: "nor", label: "Norway" },
+  { value: "dnk", label: "Denmark" },
+  { value: "fin", label: "Finland" },
+  { value: "bel", label: "Belgium" },
+  { value: "aut", label: "Austria" },
+  { value: "irl", label: "Ireland" },
+  { value: "nzl", label: "New Zealand" },
+  { value: "sgp", label: "Singapore" },
+  { value: "mlt", label: "Malta" },
+  { value: "lva", label: "Latvia" },
+  { value: "est", label: "Estonia" },
+  { value: "ltu", label: "Lithuania" },
+  { value: "hrv", label: "Croatia" },
+  { value: "svn", label: "Slovenia" },
+];

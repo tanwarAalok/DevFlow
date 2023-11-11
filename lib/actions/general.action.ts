@@ -1,8 +1,9 @@
 "use server"
 
-import { SearchParams } from "./shared.types";
+import {JobSearchParams, SearchParams} from "./shared.types";
 import {connectToDatabase} from "@/lib/database";
 import {Question, User, Answer, Tag} from "@/models";
+import axios from "axios";
 
 const SearchableTypes = ["question", "answer", "user", "tag"];
 
@@ -78,5 +79,60 @@ export async function globalSearch(params: SearchParams) {
     } catch (error) {
         console.log(`Error fetching global results, ${error}`);
         throw error;
+    }
+}
+
+export async function getJobs(params: JobSearchParams){
+
+    try {
+        const {countryCode, query} = params;
+
+        const options = {
+            method: 'GET',
+            url: 'https://jsearch.p.rapidapi.com/search',
+            params: {
+                query: query,
+                page: '1',
+                num_pages: '1'
+            },
+            headers: {
+                'X-RapidAPI-Key': '0ca192bd34mshca25146e7ea1142p17a87ajsn20830dca802b',
+                'X-RapidAPI-Host': 'jsearch.p.rapidapi.com'
+            }
+        };
+
+        const response = await axios.request(options);
+        const jobsArray = response.data.data;
+
+        // get flag
+        let jobs = [];
+
+        for(let i = 0; i<jobsArray.length; i++){
+            const job = jobsArray[i];
+            const {job_id, job_apply_link, job_country, job_title,job_city,job_state, employer_logo, job_description, job_employment_type} = job;
+
+            const country_details = await axios.get(`https://restcountries.com/v3.1/alpha/${countryCode}`)
+
+            const jobDetails = {
+                job_apply_link, job_country, job_title,job_city,job_state,
+                employer_logo, job_description, job_employment_type,job_id,
+                country_flags: country_details.data[0].flags
+            }
+
+            jobs.push(jobDetails);
+        }
+
+        return jobs;
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+export async function getCurrentLocation(){
+    try{
+        const res = await axios.get('http://ip-api.com/json/');
+        return res.data;
+    } catch(error){
+        console.log(error)
     }
 }
