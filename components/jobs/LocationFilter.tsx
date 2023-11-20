@@ -24,12 +24,7 @@ import {useEffect} from "react";
 
 
 interface Props {
-    // filters: {
-    //     name: string,
-    //     value: string,
-    // }[];
     otherClasses?: string;
-    // containerClasses?: string;
 }
 export function LocationFilter({otherClasses}: Props) {
     const searchParams = useSearchParams();

@@ -14,7 +14,7 @@ export const metadata: Metadata = {
     title: 'Collection | DevFlow',
 }
 
-export default async function Home({ searchParams }: SearchParamsProps) {
+export default async function Page({ searchParams }: SearchParamsProps) {
     const { userId } = auth();
 
     if(!userId) return null;

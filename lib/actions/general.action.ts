@@ -4,6 +4,7 @@ import {JobSearchParams, SearchParams} from "./shared.types";
 import {connectToDatabase} from "@/lib/database";
 import {Question, User, Answer, Tag} from "@/models";
 import axios from "axios";
+import {generateQueryString} from "@/lib/utils";
 
 const SearchableTypes = ["question", "answer", "user", "tag"];
 
@@ -85,13 +86,16 @@ export async function globalSearch(params: SearchParams) {
 export async function getJobs(params: JobSearchParams){
 
     try {
-        const {countryCode, query} = params;
+        const {searchQuery, filter} = params;
+
+        const defaultLocation = await getCurrentLocation();
+
 
         const options = {
             method: 'GET',
             url: 'https://jsearch.p.rapidapi.com/search',
             params: {
-                query: query,
+                query: generateQueryString(searchQuery, filter, defaultLocation.country),
                 page: '1',
                 num_pages: '1'
             },
@@ -111,7 +115,7 @@ export async function getJobs(params: JobSearchParams){
             const job = jobsArray[i];
             const {job_id, job_apply_link, job_country, job_title,job_city,job_state, employer_logo, job_description, job_employment_type} = job;
 
-            const country_details = await axios.get(`https://restcountries.com/v3.1/alpha/${countryCode}`)
+            const country_details = await axios.get(`https://restcountries.com/v3.1/alpha/${job_country}`)
 
             const jobDetails = {
                 job_apply_link, job_country, job_title,job_city,job_state,

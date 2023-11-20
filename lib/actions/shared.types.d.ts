@@ -159,6 +159,6 @@ export interface DeleteUserParams {
 }
 
 export interface JobSearchParams{
-    query: string;
-    countryCode: string
+    searchQuery?: string;
+    filter?: string;
 }

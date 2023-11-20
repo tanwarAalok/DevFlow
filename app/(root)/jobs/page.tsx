@@ -1,13 +1,10 @@
 import React from "react";
 import LocalSearchbar from "@/components/shared/search/LocalSearchbar";
-import Filter from "@/components/shared/Filter";
-import {UserFilters} from "@/constants/filters";
 import {Metadata} from "next";
 import {SearchParamsProps} from "@/types";
 import Pagination from "@/components/shared/Pagination";
 import JobCard from "@/components/cards/JobCard";
-import {getCurrentLocation, getJobs} from "@/lib/actions/general.action";
-import {generateQueryString} from "@/lib/utils";
+import {getJobs} from "@/lib/actions/general.action";
 import {LocationFilter} from "@/components/jobs/LocationFilter";
 
 
@@ -16,12 +13,11 @@ export const metadata: Metadata = {
 }
 
 const Page = async ({searchParams}: SearchParamsProps) => {
-    const currentLocation = await getCurrentLocation();
 
     //TODO: result not updating when searchParams updates
     const result = await getJobs({
-        countryCode: currentLocation.countryCode,
-        query: generateQueryString(searchParams.q, searchParams.location, currentLocation.country)
+        searchQuery: searchParams.q,
+        filter: searchParams.location
     });
 
     return (
