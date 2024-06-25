@@ -1,4 +1,6 @@
-import React from "react";
+'use client'
+
+import React, {useEffect, useState} from "react";
 import LocalSearchbar from "@/components/shared/search/LocalSearchbar";
 import {Metadata} from "next";
 import {SearchParamsProps} from "@/types";
@@ -6,22 +8,52 @@ import Pagination from "@/components/shared/Pagination";
 import JobCard from "@/components/cards/JobCard";
 import {getJobs} from "@/lib/actions/general.action";
 import {LocationFilter} from "@/components/jobs/LocationFilter";
+import axios from "axios";
+import Loading from "@/app/(root)/jobs/loading";
+import Head from "next/head";
 
 
-export const metadata: Metadata = {
-    title: 'Jobs | DevFlow',
-}
 
-const Page = async ({searchParams}: SearchParamsProps) => {
+const Page = ({searchParams}: SearchParamsProps) => {
 
-    //TODO: result not updating when searchParams updates
-    const result = await getJobs({
-        searchQuery: searchParams.q,
-        filter: searchParams.location
-    });
+
+    const [jobs, setJobs] = useState<any[]>([]);
+    const [loading, setLoading] = useState<boolean>(true);
+
+    useEffect(() => {
+        const fetchLocation = async () => {
+            setLoading(true);
+            try{
+                const res = await axios.get('http://ip-api.com/json/');
+
+                const result = await getJobs({
+                    searchQuery: searchParams.q,
+                    filter: searchParams.location,
+                    currentLocation: res.data
+                });
+
+                // @ts-ignore
+                setJobs(result);
+            }
+            catch (error) {
+                console.error("Error fetching location:", error);
+            }
+            finally {
+                setLoading(false);
+            }
+        };
+
+        fetchLocation();
+    }, [searchParams.q, searchParams.location]);
+
+    if(loading) return <Loading/>
 
     return (
         <>
+            <Head>
+                <title>Jobs | DevFlow</title>
+            </Head>
+
             <h1 className="h1-bold text-dark100_light900">All Jobs</h1>
 
             <div className="mt-11 flex justify-between gap-5 max-sm:flex-col sm:items-center">
@@ -40,9 +72,9 @@ const Page = async ({searchParams}: SearchParamsProps) => {
             </div>
 
             <section className="light-border mb-9 mt-11 flex flex-col gap-9 border-b pb-9">
-                {result && result.length > 0 ? (
-                    result.map((job: any) => (
-                        <JobCard key={job.job_id} data={job}/>
+                {jobs && jobs.length > 0 ? (
+                    jobs.map((job: any) => (
+                        <JobCard key={job.job_id} data={job} />
                     ))
                 ) : (
                     <div className="paragraph-regular text-dark200_light800 mx-auto max-w-4xl text-center">

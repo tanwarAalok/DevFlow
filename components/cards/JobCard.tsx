@@ -1,7 +1,9 @@
-
-// @ts-ignore
 import Image from "next/image";
 import Link from "next/link";
+
+interface IJobData {
+
+}
 
 // @ts-ignore
 const JobCard = ({data}) => {

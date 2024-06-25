@@ -66,9 +66,9 @@ export function LocationFilter({otherClasses}: Props) {
                         <CommandInput placeholder="Search Location..." />
                         <CommandEmpty>No Location found.</CommandEmpty>
                         <CommandGroup>
-                            {locationFilter.map((location) => (
+                            {locationFilter.map((location, index) => (
                                 <CommandItem
-                                    key={location.value}
+                                    key={index}
                                     value={location.value}
                                     className="cursor-pointer focus:bg-light-800 dark:focus:bg-dark-400"
                                     onSelect={(currentValue) => {

@@ -161,4 +161,5 @@ export interface DeleteUserParams {
 export interface JobSearchParams{
     searchQuery?: string;
     filter?: string;
+    currentLocation?: string;
 }

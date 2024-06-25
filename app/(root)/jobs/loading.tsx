@@ -1,6 +1,10 @@
 // @ts-ignore
 import {Skeleton} from "@/components/ui/skeleton";
+import {Metadata} from "next";
 
+export const metadata: Metadata = {
+    title: 'Jobs | DevFlow',
+}
 
 const Loading = () => {
     return (
