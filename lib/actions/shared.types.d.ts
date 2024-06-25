@@ -161,5 +161,108 @@ export interface DeleteUserParams {
 export interface JobSearchParams{
     searchQuery?: string;
     filter?: string;
-    currentLocation?: string;
+    currentLocation: ICurrentLocation;
+}
+
+export interface ICurrentLocation {
+    ip: string;
+    continent_code: string;
+    continent_name: string;
+    country_code2: string;
+    country_code3: string;
+    country_name: string;
+    country_name_official: string;
+    country_capital: string;
+    state_prov: string;
+    state_code: string;
+    district: string;
+    city: string;
+    zipcode: string;
+    latitude: string;
+    longitude: string;
+    is_eu: boolean;
+    calling_code: string;
+    country_tld: string;
+    languages: string;
+    country_flag: string;
+    geoname_id: string;
+    isp: string;
+    connection_type: string;
+    organization: string;
+    country_emoji: string;
+    currency: {
+        code: string;
+        name: string;
+        symbol: string;
+    };
+    time_zone: {
+        name: string;
+        offset: number;
+        offset_with_dst: number;
+        current_time: string;
+        current_time_unix: number;
+        is_dst: boolean;
+        dst_savings: number;
+        dst_exists: boolean;
+        dst_start: string;
+        dst_end: string;
+    };
+}
+
+export interface IJobData {
+    job_id: string;
+    employer_name: string;
+    employer_logo: string;
+    employer_website: string;
+    employer_company_type: string;
+    job_publisher: string;
+    job_employment_type: string;
+    job_title: string;
+    job_apply_link: string;
+    job_apply_is_direct: boolean;
+    job_apply_quality_score: number;
+    apply_options: any[]; // You might want to define a more specific type for apply_options
+    job_description: string;
+    job_is_remote: boolean;
+    job_posted_at_timestamp: number;
+    job_posted_at_datetime_utc: string;
+    job_city: string;
+    job_state: string;
+    job_country: string;
+    job_latitude: number;
+    job_longitude: number;
+    job_benefits: any; // Define a specific type if possible
+    job_google_link: string;
+    job_offer_expiration_datetime_utc: string | null;
+    job_offer_expiration_timestamp: number | null;
+    job_required_experience: {
+        no_experience_required: boolean;
+        required_experience_in_months: number;
+        experience_mentioned: boolean;
+        experience_preferred: boolean;
+    };
+    job_required_skills: any; // Define a specific type if possible
+    job_required_education: {
+        postgraduate_degree: boolean;
+        professional_certification: boolean;
+        high_school: boolean;
+        associates_degree: boolean;
+        bachelors_degree: boolean;
+        degree_mentioned: boolean;
+        degree_preferred: boolean;
+        professional_certification_mentioned: boolean;
+    };
+    job_experience_in_place_of_education: boolean;
+    job_min_salary: number | null;
+    job_max_salary: number | null;
+    job_salary_currency: string | null;
+    job_salary_period: string | null;
+    job_highlights: any; // Define a specific type if possible
+    job_job_title: string;
+    job_posting_language: string;
+    job_onet_soc: string;
+    job_onet_job_zone: string;
+    job_occupational_categories: any; // Define a specific type if possible
+    job_naics_code: string;
+    job_naics_name: string;
 }

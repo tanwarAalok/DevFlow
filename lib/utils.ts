@@ -20,6 +20,18 @@ export function generateQueryString(query: string | undefined, location: string 
   }
 }
 
+export function formatLocation(city?: string, state?: string, country?: string): string {
+  if (city && state) {
+    return `${city}, ${state}`;
+  } else if (state) {
+    return state;
+  } else if (country) {
+    return country;
+  } else {
+    return '';
+  }
+}
+
 export const getTimestamp = (createdAt: Date): string => {
   const now = new Date();
   const timeDifference = now.getTime() - createdAt.getTime();

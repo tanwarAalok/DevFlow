@@ -11,20 +11,21 @@ import {LocationFilter} from "@/components/jobs/LocationFilter";
 import axios from "axios";
 import Loading from "@/app/(root)/jobs/loading";
 import Head from "next/head";
+import {IJobData} from "@/lib/actions/shared.types";
 
 
 
 const Page = ({searchParams}: SearchParamsProps) => {
 
 
-    const [jobs, setJobs] = useState<any[]>([]);
+    const [jobs, setJobs] = useState<IJobData[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
 
     useEffect(() => {
         const fetchLocation = async () => {
             setLoading(true);
             try{
-                const res = await axios.get('/api/location');
+                const res = await axios.get(`https://api.ipgeolocation.io/ipgeo?apiKey=${process.env.NEXT_PUBLIC_IPGEO_API_KEY}`);
 
                 const result = await getJobs({
                     searchQuery: searchParams.q,
@@ -73,7 +74,7 @@ const Page = ({searchParams}: SearchParamsProps) => {
 
             <section className="light-border mb-9 mt-11 flex flex-col gap-9 border-b pb-9">
                 {jobs && jobs.length > 0 ? (
-                    jobs.map((job: any) => (
+                    jobs.map((job: IJobData) => (
                         <JobCard key={job.job_id} data={job} />
                     ))
                 ) : (

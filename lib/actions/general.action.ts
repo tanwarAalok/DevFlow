@@ -1,12 +1,13 @@
 "use server"
 
-import {JobSearchParams, SearchParams} from "./shared.types";
+import {ICurrentLocation, JobSearchParams, SearchParams} from "./shared.types";
 import {connectToDatabase} from "@/lib/database";
-import {Question, User, Answer, Tag} from "@/models";
+import {Answer, Question, Tag, User} from "@/models";
 import axios from "axios";
 import {generateQueryString} from "@/lib/utils";
 
 const SearchableTypes = ["question", "answer", "user", "tag"];
+
 
 export async function globalSearch(params: SearchParams) {
     try {
@@ -86,16 +87,13 @@ export async function globalSearch(params: SearchParams) {
 export async function getJobs(params: JobSearchParams){
 
     try {
-        const {searchQuery, filter} = params;
-
-        const defaultLocation = await getCurrentLocation();
-
+        const {searchQuery, filter, currentLocation} = params;
 
         const options = {
             method: 'GET',
             url: 'https://jsearch.p.rapidapi.com/search',
             params: {
-                query: generateQueryString(searchQuery, filter, defaultLocation.country),
+                query: generateQueryString(searchQuery, filter, currentLocation.country_name),
                 page: '1',
                 num_pages: '1'
             },
@@ -108,14 +106,17 @@ export async function getJobs(params: JobSearchParams){
         const response = await axios.request(options);
         const jobsArray = response.data.data;
 
+        if(jobsArray.length == 0) return [];
+
         // get flag
         let jobs = [];
+
+        const country_details = await axios.get(`https://restcountries.com/v3.1/alpha/${jobsArray[0].job_country}`)
 
         for(let i = 0; i<jobsArray.length; i++){
             const job = jobsArray[i];
             const {job_id, job_apply_link, job_country, job_title,job_city,job_state, employer_logo, job_description, job_employment_type} = job;
 
-            const country_details = await axios.get(`https://restcountries.com/v3.1/alpha/${job_country}`)
 
             const jobDetails = {
                 job_apply_link, job_country, job_title,job_city,job_state,
@@ -129,14 +130,5 @@ export async function getJobs(params: JobSearchParams){
         return jobs;
     } catch (error) {
         console.error(error);
-    }
-}
-
-export async function getCurrentLocation(){
-    try{
-        const res = await axios.get('http://ip-api.com/json/');
-        return res.data;
-    } catch(error){
-        console.log(error)
     }
 }

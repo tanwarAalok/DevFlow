@@ -1,9 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-
-interface IJobData {
-
-}
+import {formatLocation} from "@/lib/utils";
 
 // @ts-ignore
 const JobCard = ({data}) => {
@@ -11,8 +8,8 @@ const JobCard = ({data}) => {
         <section className="background-light900_dark200 light-border shadow-light100_darknone flex flex-col items-start gap-6 rounded-lg border p-6 sm:flex-row sm:p-8">
             <div className="flex w-full justify-end sm:hidden">
                 <div className="background-light800_dark400 flex items-center justify-end gap-2 rounded-2xl px-3 py-1.5">
-                    <Image src={'/assets/images/site-logo.svg'} alt={"logo"} className="rounded-full" width={16} height={16}/>
-                    <p className="body-medium text-dark400_light700">HIEHEWRWER</p>
+                    <Image src={data.country_flags.svg} alt={data.country_flags.alt} width={16} height={16} />
+                    <p className="body-medium text-dark400_light700">{formatLocation(data.job_city, data.job_state, data.job_country)}</p>
                 </div>
             </div>
             <div className="flex items-center gap-6">
@@ -24,7 +21,7 @@ const JobCard = ({data}) => {
                     <div className="hidden sm:flex">
                         <div className="background-light800_dark400 flex items-center justify-end gap-2 rounded-2xl px-3 py-1.5">
                             <Image src={data.country_flags.svg} alt={data.country_flags.alt} width={16} height={16}/>
-                            <p className="body-medium text-dark400_light700">{data.job_city}, {data.job_state}, {data.job_country}</p>
+                            <p className="body-medium text-dark400_light700">{formatLocation(data.job_city, data.job_state, data.job_country)}</p>
                         </div>
                     </div>
                 </div>
