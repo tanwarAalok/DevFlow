@@ -24,7 +24,7 @@ const Page = ({searchParams}: SearchParamsProps) => {
         const fetchLocation = async () => {
             setLoading(true);
             try{
-                const res = await axios.get('http://ip-api.com/json/');
+                const res = await axios.get('/api/location');
 
                 const result = await getJobs({
                     searchQuery: searchParams.q,
